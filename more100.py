@@ -5,8 +5,6 @@ import pprint
 res = requests.get('https://news.ycombinator.com/news')
 res2 = requests.get('https://news.ycombinator.com/news?p=2')
 
-print(res2)
-
 # beautifulSoup converts from String to a Python object (parsing)
 soup = BeautifulSoup(res.text, 'html.parser')
 soup2 = BeautifulSoup(res2.text, 'html.parser')
@@ -19,9 +17,11 @@ subtext2 = soup2.select('.subtext')
 mega_links = links + links2
 mega_subtext = subtext + subtext2
 
+# sort list of news
 def sort_stories_by_votes(hnlist):
 	return sorted(hnlist, key= lambda k: k['votes'], reverse=True)
 
+# make list of posts above 100 points
 def create_custom_hn(links, subtext):
 	hn = []
 	for index, item in enumerate(links):
