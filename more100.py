@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import pprint
+import sendemail
+import datetime as dt
+import time
 
 res = requests.get('https://news.ycombinator.com/news')
 res2 = requests.get('https://news.ycombinator.com/news?p=2')
@@ -17,11 +20,18 @@ subtext2 = soup2.select('.subtext')
 mega_links = links + links2
 mega_subtext = subtext + subtext2
 
+def prettytext(content):
+	final = ''
+	for i in content:
+		final = final + i['title'] + '\n' + str(i['votes']) + '\n' + i['link'] + '\n'
+		final = final + '\n'
+	return final
+
 # sort list of news
 def sort_stories_by_votes(hnlist):
 	return sorted(hnlist, key= lambda k: k['votes'], reverse=True)
 
-# make list of posts above 100 points
+# make list of posts above 100 points and return top 5
 def create_custom_hn(links, subtext):
 	hn = []
 	for index, item in enumerate(links):
@@ -32,6 +42,25 @@ def create_custom_hn(links, subtext):
 			points = int(vote[0].getText().split(' ')[0])
 			if (points > 100):
 				hn.append({'title': title, 'link':href, 'votes':points})
-	return sort_stories_by_votes(hn)
+	return sort_stories_by_votes(hn)[:5]
 
-pprint.pprint(create_custom_hn(mega_links, mega_subtext))
+# pprint.pprint(create_custom_hn(mega_links, mega_subtext))
+content = prettytext(create_custom_hn(mega_links, mega_subtext))
+
+first_email_time = dt.datetime(2020, 8, 21, 19, 50, 0)
+interval = dt.timedelta(days=1)
+
+send_time = first_email_time
+def send_email_at(send_time):
+	time.sleep(send_time.timestamp() - time.time())
+	sendemail.send_email_to('danielbenet986@gmail.com', content)
+	print('email sent!')
+
+try:
+	while True:
+		send_email_at(send_time)
+		send_time = send_time + interval
+		time.sleep(10)
+except KeyboardInterrupt: 
+		print('stopping')
+
