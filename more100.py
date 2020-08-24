@@ -47,7 +47,8 @@ def create_custom_hn(links, subtext):
 # pprint.pprint(create_custom_hn(mega_links, mega_subtext))
 content = prettytext(create_custom_hn(mega_links, mega_subtext))
 
-first_email_time = dt.datetime(2020, 8, 21, 19, 50, 0)
+# first date time
+first_email_time = dt.datetime(2020, 8, 22, 8, 0, 0)
 interval = dt.timedelta(days=1)
 
 send_time = first_email_time
@@ -60,7 +61,6 @@ try:
 	while True:
 		send_email_at(send_time)
 		send_time = send_time + interval
-		time.sleep(10)
 except KeyboardInterrupt: 
 		print('stopping')
 
